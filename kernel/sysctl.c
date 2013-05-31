@@ -66,6 +66,9 @@ enum sysctl_writes_mode {
 
 static enum sysctl_writes_mode sysctl_writes_strict = SYSCTL_WRITES_STRICT;
 #endif /* CONFIG_PROC_SYSCTL */
+#ifdef CONFIG_USER_NS
+extern int unprivileged_userns_clone;
+#endif
 #endif /* CONFIG_SYSCTL */
 
 /*
@@ -1456,6 +1459,24 @@ int proc_do_static_key(const struct ctl_table *table, int write,
 }
 
 static const struct ctl_table sysctl_subsys_table[] = {
+	{
+		.procname	= "yield_type",
+		.data		= &sysctl_sched_yield_type,
+		.maxlen		= sizeof (int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec,
+		.extra1		= SYSCTL_ZERO,
+		.extra2		= SYSCTL_TWO,
+	},
+#ifdef CONFIG_USER_NS
+	{
+		.procname	= "unprivileged_userns_clone",
+		.data		= &unprivileged_userns_clone,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec,
+	},
+#endif
 #ifdef CONFIG_PROC_SYSCTL
 	{
 		.procname	= "sysctl_writes_strict",
