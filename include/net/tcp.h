@@ -1212,7 +1212,9 @@ enum tcp_ca_ack_event_flags {
 #define TCP_CONG_ECT_1_NEGOTIATION	BIT(3)
 /* Cannot fallback to RFC3168 during AccECN negotiation */
 #define TCP_CONG_NO_FALLBACK_RFC3168	BIT(4)
+#define TCP_CONG_WANTS_CE_EVENTS	0x4
 #define TCP_CONG_MASK  (TCP_CONG_NON_RESTRICTED | TCP_CONG_NEEDS_ECN | \
+            TCP_CONG_WANTS_CE_EVENTS | 
 			TCP_CONG_NEEDS_ACCECN | TCP_CONG_ECT_1_NEGOTIATION | \
 			TCP_CONG_NO_FALLBACK_RFC3168)
 
@@ -1345,6 +1347,14 @@ static inline char *tcp_ca_get_name_by_key(u32 key, char *buffer)
 	return NULL;
 }
 #endif
+
+static inline bool tcp_ca_wants_ce_events(const struct sock *sk)
+{
+	const struct inet_connection_sock *icsk = inet_csk(sk);
+
+	return icsk->icsk_ca_ops->flags & (TCP_CONG_NEEDS_ECN |
+					   TCP_CONG_WANTS_CE_EVENTS);
+}
 
 static inline bool tcp_ca_needs_ecn(const struct sock *sk)
 {
