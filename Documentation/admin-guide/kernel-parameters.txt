@@ -3453,8 +3453,6 @@
 	noapic		[SMP,APIC] Tells the kernel to not make use of any
 			IOAPICs that may be present in the system.
 
-	noautogroup	Disable scheduler automatic task group creation.
-
 	nocache		[ARM]
 
 	noclflush	[BUGS=X86] Don't use the CLFLUSH instruction
