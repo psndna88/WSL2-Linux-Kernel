@@ -5261,6 +5261,7 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
 #endif
 	spin_lock(&memcg_idr_lock);
 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+	lru_gen_init_memcg(memcg);
 	spin_unlock(&memcg_idr_lock);
 	return memcg;
 fail:
