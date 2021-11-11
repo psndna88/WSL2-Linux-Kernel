@@ -811,6 +811,13 @@ static inline bool system_supports_tlb_range(void)
 int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
 bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
 
+static inline bool system_has_hw_af(void)
+{
+	return IS_ENABLED(CONFIG_ARM64_HW_AFDBM) && cpus_have_const_cap(ARM64_HW_AF);
+}
+
+extern int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+
 static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
 {
 	switch (parange) {
