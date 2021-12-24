@@ -1428,6 +1428,14 @@ free_opts:
 }
 
 // clang-format off
+static struct file_system_type ntfs_fs_type_compat = {
+	.owner			= THIS_MODULE,
+	.name			= "ntfs",
+	.init_fs_context	= ntfs_init_fs_context,
+	.parameters		= ntfs_fs_parameters,
+	.kill_sb		= kill_block_super,
+	.fs_flags		= FS_REQUIRES_DEV,
+};
 static struct file_system_type ntfs_fs_type = {
 	.owner			= THIS_MODULE,
 	.name			= "ntfs3",
@@ -1464,6 +1472,7 @@ static int __init init_ntfs_fs(void)
 		goto out1;
 	}
 
+	err = register_filesystem(&ntfs_fs_type_compat);
 	err = register_filesystem(&ntfs_fs_type);
 	if (err)
 		goto out;
@@ -1484,6 +1493,7 @@ static void __exit exit_ntfs_fs(void)
 	}
 
 	unregister_filesystem(&ntfs_fs_type);
+	unregister_filesystem(&ntfs_fs_type_compat);
 	ntfs3_exit_bitmap();
 }
 
