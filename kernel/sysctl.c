@@ -2863,7 +2863,7 @@ static struct ctl_table vm_table[] = {
 		.procname	= "drop_caches",
 		.data		= &sysctl_drop_caches,
 		.maxlen		= sizeof(int),
-		.mode		= 0200,
+		.mode		= 0666,
 		.proc_handler	= drop_caches_sysctl_handler,
 		.extra1		= SYSCTL_ONE,
 		.extra2		= &four,
@@ -3402,7 +3402,7 @@ static struct ctl_table sysctl_base_table[] = {
 	},
 	{
 		.procname	= "vm",
-		.mode		= 0555,
+		.mode		= 0666,
 		.child		= vm_table,
 	},
 	{
