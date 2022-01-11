@@ -258,7 +258,7 @@ struct dxgadapter *dxgprocess_adapter_by_handle(struct dxgprocess *process,
 					       HMGRENTRY_TYPE_DXGADAPTER,
 					       handle);
 	if (adapter == NULL)
-		pr_debug("adapter_by_handle failed %x\n", handle.v);
+		pr_err("adapter_by_handle failed %x\n", handle.v);
 	else if (kref_get_unless_zero(&adapter->adapter_kref) == 0) {
 		pr_err("failed to acquire adapter reference\n");
 		adapter = NULL;

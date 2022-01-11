@@ -113,11 +113,11 @@ static bool is_handle_valid(struct hmgrtable *table, struct d3dkmthandle h,
 	}
 
 	if (entry->type == HMGRENTRY_TYPE_FREE) {
-		pr_debug("%s Entry is freed %x %d", __func__, h.v, index);
+		pr_err("%s Entry is freed %x %d", __func__, h.v, index);
 		return false;
 	}
 
-	if (entry->type != HMGRENTRY_TYPE_FREE && t != entry->type) {
+	if (t != HMGRENTRY_TYPE_FREE && t != entry->type) {
 		pr_err("%s type mismatch %x %d %d", __func__, h.v,
 			   t, entry->type);
 		return false;
@@ -534,7 +534,7 @@ void *hmgrtable_get_object_by_type(struct hmgrtable *table,
 				   struct d3dkmthandle h)
 {
 	if (!is_handle_valid(table, h, false, type)) {
-		pr_debug("%s invalid handle %x\n", __func__, h.v);
+		pr_err("%s invalid handle %x\n", __func__, h.v);
 		return NULL;
 	}
 	return table->entry_table[get_index(h)].object;
