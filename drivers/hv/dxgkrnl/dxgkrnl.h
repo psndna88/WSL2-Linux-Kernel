@@ -697,7 +697,7 @@ struct dxgallocation {
 	u32				cached:1;
 	u32				handle_valid:1;
 	/* GPADL address list for existing sysmem allocations */
-	struct vmbus_gpadl		gpadl;
+	u32				gpadl;
 	/* Number of pages in the 'pages' array */
 	u32				num_pages;
 	/*
@@ -746,8 +746,7 @@ static inline void guid_to_luid(guid_t *guid, struct winluid *luid)
 #define DXGK_VMBUS_LAST_COMPATIBLE_INTERFACE_VERSION	16
 
 void dxgvmb_initialize(void);
-int dxgvmb_send_set_iospace_region(u64 start, u64 len,
-				   struct vmbus_gpadl *shared_mem_gpadl);
+int dxgvmb_send_set_iospace_region(u64 start, u64 len, u32 shared_mem_gpadl);
 int dxgvmb_send_create_process(struct dxgprocess *process);
 int dxgvmb_send_destroy_process(struct d3dkmthandle process);
 int dxgvmb_send_open_adapter(struct dxgadapter *adapter);

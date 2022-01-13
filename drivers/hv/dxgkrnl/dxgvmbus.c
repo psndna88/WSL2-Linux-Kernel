@@ -205,7 +205,6 @@ int dxgvmbuschannel_init(struct dxgvmbuschannel *ch, struct hv_device *hdev)
 		goto cleanup;
 	}
 
-	hdev->channel->max_pkt_size = DXG_MAX_VM_BUS_PACKET_SIZE;
 	ret = vmbus_open(hdev->channel, RING_BUFSIZE, RING_BUFSIZE,
 			 NULL, 0, dxgvmbuschannel_receive, ch);
 	if (ret) {
@@ -576,8 +575,7 @@ static u8 *dxg_map_iospace(u64 iospace_address, u32 size,
  * Global messages to the host
  */
 
-int dxgvmb_send_set_iospace_region(u64 start, u64 len,
-	struct vmbus_gpadl *shared_mem_gpadl)
+int dxgvmb_send_set_iospace_region(u64 start, u64 len, u32 shared_mem_gpadl)
 {
 	int ret;
 	struct dxgkvmb_command_setiospaceregion *command;
@@ -597,7 +595,7 @@ int dxgvmb_send_set_iospace_region(u64 start, u64 len,
 	command->start = start;
 	command->length = len;
 	if (command->shared_page_gpadl)
-		command->shared_page_gpadl = shared_mem_gpadl->gpadl_handle;
+		command->shared_page_gpadl = shared_mem_gpadl;
 	ret = dxgvmb_send_sync_msg_ntstatus(&dxgglobal->channel, msg.hdr,
 					    msg.size);
 	if (ret < 0)
@@ -1372,14 +1370,14 @@ int create_existing_sysmem(struct dxgdevice *device,
 			goto cleanup;
 		}
 		dev_dbg(dxgglobaldev, "New gpadl %d",
-			dxgalloc->gpadl.gpadl_handle);
+			dxgalloc->gpadl);
 
 		command_vgpu_to_host_init2(&set_store_command->hdr,
 					DXGK_VMBCOMMAND_SETEXISTINGSYSMEMSTORE,
 					device->process->host_handle);
 		set_store_command->device = device->handle;
 		set_store_command->allocation = host_alloc->allocation;
-		set_store_command->gpadl = dxgalloc->gpadl.gpadl_handle;
+		set_store_command->gpadl = dxgalloc->gpadl;
 		ret = dxgvmb_send_sync_msg_ntstatus(msg.channel, msg.hdr,
 						    msg.size);
 		if (ret < 0)
