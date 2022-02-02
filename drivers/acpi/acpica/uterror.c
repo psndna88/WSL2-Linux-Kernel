@@ -204,9 +204,9 @@ acpi_ut_prefixed_namespace_error(const char *module_name,
 	full_path =
 	    acpi_ns_build_prefixed_pathname(prefix_scope, internal_path);
 
-	acpi_os_printf("%s [%s], %s", message,
-		       full_path ? full_path : "Could not get pathname",
-		       acpi_format_exception(lookup_status));
+//	acpi_os_printf("%s [%s], %s", message,
+//		       full_path ? full_path : "Could not get pathname",
+//		       acpi_format_exception(lookup_status));
 
 	if (full_path) {
 		ACPI_FREE(full_path);
