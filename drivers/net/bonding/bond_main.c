@@ -1918,12 +1918,12 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
 			if (!bond_has_slaves(bond)) {
 				bond->params.fail_over_mac = BOND_FOM_ACTIVE;
 				slave_warn(bond_dev, slave_dev, "Setting fail_over_mac to active for active-backup mode\n");
-			} else {
+			} /* else {
 				SLAVE_NL_ERR(bond_dev, slave_dev, extack,
 					     "Slave device does not support setting the MAC address, but fail_over_mac is not set to active");
 				res = -EOPNOTSUPP;
 				goto err_undo_flags;
-			}
+			} */
 		}
 	}
 
