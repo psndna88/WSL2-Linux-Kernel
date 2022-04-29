@@ -1,7 +1,6 @@
 #!/bin/bash
 export ARCH=x86
 export SUBARCH=x86
-export BUILDJOBS=8
 
 KERNELDIR=`readlink -f .`
 
@@ -31,7 +30,7 @@ echo ""
 . $KERNELDIR/cleanbuild.sh
 
 #cp -f $KERNELDIR/Microsoft/$CONFIG $KERNELDIR/OUT/Microsoft/$CONFIG
-make -j$BUILDJOBS O=$KERNELDIR/OUT KCONFIG_CONFIG=Microsoft/config-wsl_psndna88
+make -j`nproc --ignore=2`O=$KERNELDIR/OUT KCONFIG_CONFIG=Microsoft/config-wsl_psndna88
 
 if [ $SYNC_CONFIG -eq 1 ]; then # SYNC CONFIG
 	cp -f $KERNELDIR/OUT/Microsoft/$CONFIG $KERNELDIR/Microsoft/$CONFIG

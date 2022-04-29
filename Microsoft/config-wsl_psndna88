@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 5.10.112.1 Kernel Configuration
+# Linux/x86 5.10.113.1 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (Ubuntu 11.2.0-7ubuntu2) 11.2.0"
 CONFIG_CC_IS_GCC=y
