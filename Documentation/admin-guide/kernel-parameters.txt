@@ -402,6 +402,10 @@
 	autoconf=	[IPV6]
 			See Documentation/networking/ipv6.rst.
 
+	autogroup=	[KNL] Enable or disable scheduler automatic task group
+			creation.
+			Format: <bool>
+
 	apm=		[APM] Advanced Power Management
 			See header of arch/x86/kernel/apm_32.c.
 
@@ -3698,8 +3702,6 @@
 
 	noapic		[SMP,APIC] Tells the kernel to not make use of any
 			IOAPICs that may be present in the system.
-
-	noautogroup	Disable scheduler automatic task group creation.
 
 	nocache		[ARM]
 
