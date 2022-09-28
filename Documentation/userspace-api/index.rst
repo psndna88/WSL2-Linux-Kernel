@@ -33,6 +33,7 @@ place where this information is gathered.
    vduse
    futex2
    ntsync
+   winesync
 
 .. only::  subproject and html
 
