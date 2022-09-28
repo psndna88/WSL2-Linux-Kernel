@@ -67,6 +67,7 @@ Everything else
    futex2
    perf_ring_buffer
    ntsync
+   winesync
 
 .. only::  subproject and html
 
