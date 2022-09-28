@@ -27649,6 +27649,15 @@ S:	Maintained
 F:	Documentation/devicetree/bindings/iio/chemical/winsen,mhz19b.yaml
 F:	drivers/iio/chemical/mhz19b.c
 
+WINESYNC SYNCHRONIZATION PRIMITIVE DRIVER
+M:	Zebediah Figura <zfigura@codeweavers.com>
+L:	wine-devel@winehq.org
+S:	Supported
+F:	Documentation/userspace-api/winesync.rst
+F:	drivers/misc/winesync.c
+F:	include/uapi/linux/winesync.h
+F:	tools/testing/selftests/drivers/winesync/
+
 WINSYSTEMS EBC-C384 WATCHDOG DRIVER
 L:	linux-watchdog@vger.kernel.org
 S:	Orphan
