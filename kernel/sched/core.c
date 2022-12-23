@@ -2976,6 +2976,12 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
 	struct rq *rq;
 
 	rq = task_rq_lock(p, &rf);
+
+#ifdef CONFIG_TT_SCHED
+	if (rq->cfs.dedicated_cpu_bound == &p->se.tt_node)
+		rq->cfs.dedicated_cpu_bound = NULL;
+#endif
+
 	return __set_cpus_allowed_ptr_locked(p, new_mask, flags, rq, &rf);
 }
 
@@ -3117,6 +3123,20 @@ void relax_compatible_cpus_allowed_ptr(struct task_struct *p)
 	kfree(user_mask);
 }
 
+#ifdef CONFIG_TT_SCHED
+inline void inc_nr_lat_sensitive(unsigned int cpu)
+{
+	if (tt_lat_sens_enabled)
+		per_cpu(nr_lat_sensitive, cpu)++;
+}
+
+inline void dec_nr_lat_sensitive(unsigned int cpu)
+{
+	if (per_cpu(nr_lat_sensitive, cpu))
+		per_cpu(nr_lat_sensitive, cpu) >>= 1;
+}
+#endif
+
 void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 {
 #ifdef CONFIG_SCHED_DEBUG
@@ -3162,6 +3182,12 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 	trace_sched_migrate_task(p, new_cpu);
 
 	if (task_cpu(p) != new_cpu) {
+#ifdef CONFIG_TT_SCHED
+		if (task_is_lat_sensitive(p)) {
+			dec_nr_lat_sensitive(task_cpu(p));
+			inc_nr_lat_sensitive(new_cpu);
+		}
+#endif
 		if (p->sched_class->migrate_task_rq)
 			p->sched_class->migrate_task_rq(p, new_cpu);
 		p->se.nr_migrations++;
@@ -4556,6 +4582,78 @@ static int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
 
 #ifdef CONFIG_SYSCTL
 static struct ctl_table sched_core_sysctls[] = {
+#ifdef CONFIG_TT_SCHED
+	{
+		.procname	= "sched_tt_balancer_opt",
+		.data		= &tt_balancer_opt,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_ZERO,
+		.extra2		= SYSCTL_THREE,
+	},
+	{
+		.procname	= "sched_tt_max_lifetime",
+		.data		= &tt_max_lifetime,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec,
+	},
+	{
+		.procname	= "sched_tt_rt_prio",
+		.data		= &tt_rt_prio,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_NEG_TWENTY,
+		.extra2		= SYSCTL_NINETEEN,
+	},
+	{
+		.procname	= "sched_tt_interactive_prio",
+		.data		= &tt_interactive_prio,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_NEG_TWENTY,
+		.extra2		= SYSCTL_NINETEEN,
+	},
+	{
+		.procname	= "sched_tt_cpu_bound_prio",
+		.data		= &tt_cpu_bound_prio,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_NEG_TWENTY,
+		.extra2		= SYSCTL_NINETEEN,
+	},
+	{
+		.procname	= "sched_tt_batch_prio",
+		.data		= &tt_batch_prio,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_NEG_TWENTY,
+		.extra2		= SYSCTL_NINETEEN,
+	},
+	{
+		.procname	= "sched_tt_lat_sens_enabled",
+		.data		= &tt_lat_sens_enabled,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_ZERO,
+		.extra2		= SYSCTL_ONE,
+	},
+	{
+		.procname	= "sched_tt_dedicated_cpu_bound_enabled",
+		.data		= &tt_dedicated_cpu_bound_enabled,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= SYSCTL_ZERO,
+		.extra2		= SYSCTL_ONE,
+	},
+#endif
 #ifdef CONFIG_SCHEDSTATS
 	{
 		.procname       = "sched_schedstats",
@@ -4727,7 +4825,9 @@ void wake_up_new_task(struct task_struct *p)
 {
 	struct rq_flags rf;
 	struct rq *rq;
-
+#ifdef CONFIG_TT_SCHED
+	int target_cpu = 0;
+#endif
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 	WRITE_ONCE(p->__state, TASK_RUNNING);
 #ifdef CONFIG_SMP
@@ -4741,12 +4841,25 @@ void wake_up_new_task(struct task_struct *p)
 	 */
 	p->recent_used_cpu = task_cpu(p);
 	rseq_migrate(p);
+#ifdef CONFIG_TT_SCHED
+	target_cpu = select_task_rq(p, task_cpu(p), WF_FORK);
+	__set_task_cpu(p, target_cpu);
+#else
 	__set_task_cpu(p, select_task_rq(p, task_cpu(p), WF_FORK));
 #endif
+#endif
 	rq = __task_rq_lock(p, &rf);
+
+#ifdef CONFIG_TT_SCHED
+	if (task_is_lat_sensitive(p))
+		inc_nr_lat_sensitive(target_cpu);
+#endif
+
 	update_rq_clock(rq);
 	post_init_entity_util_avg(p);
-
+#ifdef CONFIG_TT_SCHED
+	p->se.tt_node.start_time = sched_clock();
+#endif
 	activate_task(rq, p, ENQUEUE_NOCLOCK);
 	trace_sched_wakeup_new(p);
 	check_preempt_curr(rq, p, WF_FORK);
@@ -5536,6 +5649,10 @@ void scheduler_tick(void)
 
 	perf_event_task_tick();
 
+#ifdef CONFIG_TT_SCHED
+	dec_nr_lat_sensitive(rq->cpu);
+#endif
+
 #ifdef CONFIG_SMP
 	rq->idle_balance = idle_cpu(cpu);
 	trigger_load_balance(rq);
@@ -5587,7 +5704,9 @@ static void sched_tick_remote(struct work_struct *work)
 	struct rq *rq = cpu_rq(cpu);
 	struct task_struct *curr;
 	struct rq_flags rf;
+#ifndef CONFIG_TT_SCHED
 	u64 delta;
+#endif
 	int os;
 
 	/*
@@ -5606,7 +5725,7 @@ static void sched_tick_remote(struct work_struct *work)
 		goto out_unlock;
 
 	update_rq_clock(rq);
-
+#ifndef CONFIG_TT_SCHED
 	if (!is_idle_task(curr)) {
 		/*
 		 * Make sure the next tick runs within a reasonable
@@ -5615,6 +5734,7 @@ static void sched_tick_remote(struct work_struct *work)
 		delta = rq_clock_task(rq) - curr->se.exec_start;
 		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
 	}
+#endif
 	curr->sched_class->task_tick(rq, curr, 0);
 
 	calc_load_nohz_remote(rq);
@@ -9676,6 +9796,10 @@ LIST_HEAD(task_groups);
 static struct kmem_cache *task_group_cache __read_mostly;
 #endif
 
+#ifdef CONFIG_TT_SCHED
+DEFINE_PER_CPU(int, nr_lat_sensitive);
+#endif
+
 void __init sched_init(void)
 {
 	unsigned long ptr = 0;
@@ -9690,6 +9814,10 @@ void __init sched_init(void)
 #endif
 
 	wait_bit_init();
+
+#ifdef CONFIG_TT_SCHED
+	printk(KERN_INFO "TT CPU scheduler v6.1 by Hamad Al Marri.");
+#endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	ptr += 2 * nr_cpu_ids * sizeof(void **);
@@ -9811,6 +9939,9 @@ void __init sched_init(void)
 #endif /* CONFIG_SMP */
 		hrtick_rq_init(rq);
 		atomic_set(&rq->nr_iowait, 0);
+#ifdef CONFIG_TT_SCHED
+		per_cpu(nr_lat_sensitive, i) = 0;
+#endif
 
 #ifdef CONFIG_SCHED_CORE
 		rq->core = rq;
