@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.1.36.2 Kernel Configuration
+# Linux/x86 6.1.42.2 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (Ubuntu 12.2.0-17ubuntu1) 12.2.0"
 CONFIG_CC_IS_GCC=y
@@ -28,7 +28,7 @@ CONFIG_THREAD_INFO_IN_TASK=y
 CONFIG_INIT_ENV_ARG_LIMIT=32
 # CONFIG_COMPILE_TEST is not set
 # CONFIG_WERROR is not set
-CONFIG_LOCALVERSION="-microsoft_WSL2_AGNi_v14.3_psndna88"
+CONFIG_LOCALVERSION="-microsoft_WSL2_AGNi_v14.4_psndna88"
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_BUILD_SALT=""
 CONFIG_HAVE_KERNEL_GZIP=y
@@ -974,6 +974,7 @@ CONFIG_PTE_MARKER_UFFD_WP=y
 CONFIG_LRU_GEN=y
 CONFIG_LRU_GEN_ENABLED=y
 # CONFIG_LRU_GEN_STATS is not set
+CONFIG_LOCK_MM_AND_FIND_VMA=y
 
 #
 # Data Access Monitoring
