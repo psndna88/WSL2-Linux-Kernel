@@ -81,6 +81,7 @@
 #define FLAG_DEBUG_LOOPBACK	0x2	/* Do NOT skip loopback addr */
 
 #define CYCLE_LEN		8	/* number of phases in a pacing gain cycle */
+extern void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks);
 
 /* BBR has the following modes for deciding how fast to send: */
 enum bbr_mode {
