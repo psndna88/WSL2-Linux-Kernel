@@ -3828,8 +3828,6 @@ int do_tcp_setsockopt(struct sock *sk, int level, int optname,
 		err = -ENOPROTOOPT;
 		break;
 	}
-	// 	case TCP_NODELAY:
-	__tcp_sock_set_nodelay(sk, val);
 
 	sockopt_release_sock(sk);
 	return err;
