@@ -53,7 +53,7 @@
 #include <net/ip6_route.h>
 #endif
 
-static struct rtnl_link_ops eoip_ops;
+static struct rtnl_link_ops eoip_ops __read_mostly;
 static int eoip_tunnel_bind_dev(struct net_device *dev);
 static void eoip_setup(struct net_device *dev);
 
@@ -853,7 +853,7 @@ static const struct nla_policy eoip_policy[IFLA_GRE_MAX + 1] = {
 	[IFLA_GRE_TOS]		= { .type = NLA_U8 },
 };
 
-static struct rtnl_link_ops eoip_ops = {
+static struct rtnl_link_ops eoip_ops __read_mostly = {
 	.kind		= "eoip",
 	.maxtype	= IFLA_GRE_MAX,
 	.policy		= eoip_policy,
