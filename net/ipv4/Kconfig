@@ -181,7 +181,7 @@ config NET_IPGRE_DEMUX
 	tristate "IP: GRE demultiplexer"
 	help
 	  This is helper module to demultiplex GRE packets on GRE version field criteria.
-	  Required by ip_gre and pptp modules.
+	  Required by ip_gre, eoip and pptp modules.
 
 config NET_IP_TUNNEL
 	tristate
@@ -216,6 +216,17 @@ config NET_IPGRE_BROADCAST
 config IP_MROUTE_COMMON
 	bool
 	depends on IP_MROUTE || IPV6_MROUTE
+
+config NET_EOIP
+	tristate "IP: EOIP ethernet tunnels over IP"
+	depends on (IPV6 || IPV6=n) && NET_IPGRE_DEMUX
+	help
+	  Tunneling means encapsulating data of one protocol type within
+	  another protocol and sending it over a channel that understands the
+	  encapsulating protocol. This particular tunneling driver implements
+	  MikroTik RouterOS compatible encapsulation of ethernet frames over
+	  existing IPv4 infrastructure. It is useful if the other endpoint
+	  is a MikroTik router.
 
 config IP_MROUTE
 	bool "IP: multicast routing"
