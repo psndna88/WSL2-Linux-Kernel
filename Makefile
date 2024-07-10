@@ -390,7 +390,7 @@ include $(srctree)/scripts/subarch.include
 # Alternatively CROSS_COMPILE can be set in the environment.
 # Default value for CROSS_COMPILE is not to prefix executables
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
-ARCH		?= $(SUBARCH)
+ARCH		:= x86
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
@@ -425,6 +425,7 @@ endif
 KCONFIG_CONFIG	?= .config
 export KCONFIG_CONFIG
 
+CCACHE := ccache
 # SHELL used by kbuild
 CONFIG_SHELL := sh
 
@@ -439,11 +440,11 @@ else ifneq ($(filter -%,$(LLVM)),)
 LLVM_SUFFIX := $(LLVM)
 endif
 
-HOSTCC	= $(LLVM_PREFIX)clang$(LLVM_SUFFIX)
-HOSTCXX	= $(LLVM_PREFIX)clang++$(LLVM_SUFFIX)
+HOSTCC	= $(CCACHE) $(LLVM_PREFIX)clang$(LLVM_SUFFIX)
+HOSTCXX	= $(CCACHE) $(LLVM_PREFIX)clang++$(LLVM_SUFFIX)
 else
-HOSTCC	= gcc
-HOSTCXX	= g++
+HOSTCC	= $(CCACHE) gcc
+HOSTCXX	= $(CCACHE) g++
 endif
 HOSTRUSTC = rustc
 HOSTPKG_CONFIG	= pkg-config
@@ -480,7 +481,7 @@ KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
 # Make variables (CC, etc...)
 CPP		= $(CC) -E
 ifneq ($(LLVM),)
-CC		= $(LLVM_PREFIX)clang$(LLVM_SUFFIX)
+CC		= $(CCACHE) $(LLVM_PREFIX)clang$(LLVM_SUFFIX)
 LD		= $(LLVM_PREFIX)ld.lld$(LLVM_SUFFIX)
 AR		= $(LLVM_PREFIX)llvm-ar$(LLVM_SUFFIX)
 NM		= $(LLVM_PREFIX)llvm-nm$(LLVM_SUFFIX)
@@ -489,7 +490,7 @@ OBJDUMP		= $(LLVM_PREFIX)llvm-objdump$(LLVM_SUFFIX)
 READELF		= $(LLVM_PREFIX)llvm-readelf$(LLVM_SUFFIX)
 STRIP		= $(LLVM_PREFIX)llvm-strip$(LLVM_SUFFIX)
 else
-CC		= $(CROSS_COMPILE)gcc
+CC		= $(CCACHE) $(CROSS_COMPILE)gcc
 LD		= $(CROSS_COMPILE)ld
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm

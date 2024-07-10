@@ -38,6 +38,20 @@ as follows:
 3. Build the kernel using the WSL2 kernel configuration:  
    `$ make KCONFIG_CONFIG=Microsoft/config-wsl`
 
+Instructions for building an x86_64 AGNi WSL2 kernel with an Ubuntu distribution are
+as follows:
+
+1. Install the build dependencies:  
+   `$ sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio`
+2. Build the kernel using the WSL2 kernel configuration:  
+   `$ mkdir OUT`
+   `$ make O=OUT KCONFIG_CONFIG=Microsoft/config-wsl_psndna88`
+   Compiled kernel will be found in OUT/x86/boot/bzImage
+3. Editing config:
+   `$ make menuconfig O=OUT KCONFIG_CONFIG=Microsoft/config-wsl_psndna88`
+4. Saving edited config:
+   `$ cp -f OUT/Microsoft/config-wsl_psndna88 Microsoft/config-wsl_psndna88`
+   
 # Install Instructions
 
 Please see the documentation on the [.wslconfig configuration
@@ -50,3 +64,14 @@ file][install-inst] for information on using a custom built kernel.
 [security-bug]: https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
 [submit-patch]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
 [install-inst]: https://docs.microsoft.com/en-us/windows/wsl/wsl-config#configure-global-options-with-wslconfig
+
+Create file named ".wslconfig" in "C:\Users\<user>" (replace <user> with your windows username folder)
+add following lines to enable custom kernel boot in WSL:
+
+[wsl2]
+memory=8GB   # Limits VM memory in WSL 2
+processors=6 # Limits WSL 6 logical processors
+kernel=C:\\Users\\<user>\\bzImage
+
+NOTE: users can edit memory & processors as per their requirements & edit user as mentioned above
+
