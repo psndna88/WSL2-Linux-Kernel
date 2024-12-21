@@ -39,6 +39,8 @@ rm $KERNELDIR/OUT/Microsoft/$CONFIG $KERNELDIR/OUT/Microsoft/$CONFIG.old 2>/dev/
 
 if [ -f $KERNELDIR/OUT/arch/x86/boot/bzImage ]; then
 	mv -f $KERNELDIR/OUT/arch/x86/boot/bzImage $READY_ZIP/AGNi_$AGNI_VERSION-bzImage
+	cd $KERNELDIR; mkdir $READY_ZIP/AGNi_$AGNI_VERSION-modules
+	find -name '*.ko' -exec cp -av {} $READY_ZIP/AGNi_$AGNI_VERSION-modules/ \;	
 else
 	echo "         ERROR: compiling AGNi kernel $DEVICE."
 fi
