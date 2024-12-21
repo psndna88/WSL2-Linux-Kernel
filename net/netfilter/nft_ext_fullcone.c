@@ -181,7 +181,7 @@ static int nft_fullcone_init(const struct nft_ctx *ctx, const struct nft_expr *e
 	return err;
 }
 
-static int nft_fullcone_dump(struct sk_buff *skb, const struct nft_expr *expr)
+static int nft_fullcone_dump(struct sk_buff *skb, const struct nft_expr *expr, bool abc)
 {
 	const struct nft_fullcone *priv = nft_expr_priv(expr);
 
