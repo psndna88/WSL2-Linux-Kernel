@@ -418,7 +418,7 @@ config TUN
 	  If you don't know what to use this for, you don't need it.
 
 config TAP
-	tristate
+	tristate "tap user space interface"
 	help
 	  This option is selected by any driver implementing tap user space
 	  interface for a virtual interface to re-use core tap functionality.
