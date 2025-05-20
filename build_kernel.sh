@@ -4,7 +4,7 @@ export SUBARCH=x86
 
 KERNELDIR="`pwd`"
 
-DEVICE="x86"
+DEVICE="x86-64"
 CONFIG="config-wsl_psndna88"
 SYNC_CONFIG=1
 export AGNI_BUILD_TYPE="generic_x86-64 WSL2"
@@ -38,14 +38,14 @@ fi
 rm $KERNELDIR/.config $KERNELDIR/.config.old $KERNELDIR/Microsoft/$CONFIG.old 2>/dev/null
 
 if [ -f $KERNELDIR/arch/x86/boot/bzImage ]; then
-	mv -f $KERNELDIR/arch/x86/boot/bzImage $READY_ZIP/AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage
+	mv -f $KERNELDIR/arch/x86/boot/bzImage $READY_ZIP/AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage.kernel
 	mkdir $KERNELDIR/modules 2>/dev/null
 	make INSTALL_MOD_PATH="$KERNELDIR/modules" modules_install
 	sudo ./Microsoft/scripts/gen_modules_vhdx.sh "$KERNELDIR/modules" $(make -s kernelrelease) $READY_ZIP/AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-modules.vhdx
 	echo "   Compressing AGNi_WSL2_$DEVICE-$AGNI_VERSION.7z ....."
-	cd $READY_ZIP; 7z a AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX.7z AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-modules.vhdx
+	cd $READY_ZIP; 7z a AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX.7z AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage.kernel AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-modules.vhdx
 	if [ -f AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX.7z ]; then
-		rm AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-modules.vhdx
+		rm AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-bzImage.kernel AGNi_WSL2_$DEVICE-$AGNI_VERSION-$AGNI_KERNEL_LINUX-modules.vhdx
 	fi
 	cd $KERNELDIR; . $KERNELDIR/cleanbuild.sh
 	echo "   AGNi_WSL2_$DEVICE-$AGNI_VERSION.7z DONE "
