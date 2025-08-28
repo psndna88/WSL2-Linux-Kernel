@@ -72,3 +72,9 @@ config SMB_SERVER_KERBEROS5
 	bool "Support for Kerberos 5"
 	depends on SMB_SERVER
 	default y
+
+config SMB_SERVER_SAME_IP_LIMIT
+	bool "Limits repeated connections from clients with the same IP"
+	depends on SMB_SERVER
+	default n
+
