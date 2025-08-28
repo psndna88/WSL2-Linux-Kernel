@@ -257,6 +257,7 @@ static int ksmbd_kthread_fn(void *p)
 			continue;
 		}
 
+#ifdef CONFIG_SMB_SERVER_SAME_IP_LIMIT
 		/*
 		 * Limits repeated connections from clients with the same IP.
 		 */
@@ -284,6 +285,7 @@ static int ksmbd_kthread_fn(void *p)
 		up_read(&conn_list_lock);
 		if (ret == -EAGAIN)
 			continue;
+#endif
 
 		if (server_conf.max_connections &&
 		    atomic_inc_return(&active_num_conn) >= server_conf.max_connections) {
