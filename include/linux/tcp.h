@@ -233,8 +233,9 @@ struct tcp_sock {
 	u8	scaling_ratio;	/* see tcp_win_from_space() */
 	u8	repair      : 1,
 		tcp_usec_ts : 1, /* TSval values in usec */
-		is_sack_reneg:1,    /* in recovery from loss with SACK reneg? */
-		is_cwnd_limited:1,/* forward progress limited by snd_cwnd? */
+		is_sack_reneg:1; /* in recovery from loss with SACK reneg? */
+	u32	recvmsg_inq : 1, /* Indicate # of bytes in queue upon recvmsg */
+		is_cwnd_limited:1;/* forward progress limited by snd_cwnd? */
 	__cacheline_group_end(tcp_sock_read_txrx);
 
 	/* RX read-mostly hotpath cache lines */
@@ -247,12 +248,11 @@ struct tcp_sock {
 	u16	advmss;		/* Advertised MSS			*/
 	u16	urg_data;	/* Saved octet of OOB data and control flags */
 	u32	lost;		/* Total data packets lost incl. rexmits */
+	u32	snd_ssthresh;	/* Slow start size threshold		*/
 	struct  minmax rtt_min;
 	/* OOO segments go in this rbtree. Socket lock must be held. */
 	struct rb_root	out_of_order_queue;
-	u32	snd_ssthresh;	/* Slow start size threshold		*/
-	u32	recvmsg_inq : 1,/* Indicate # of bytes in queue upon recvmsg */
-		fast_ack_mode:1;/* ack ASAP if >1 rcv_mss received? */
+	u32	fast_ack_mode:1;/* ack ASAP if >1 rcv_mss received? */
 	__cacheline_group_end(tcp_sock_read_rx);
 
 	/* TX read-write hotpath cache lines */
