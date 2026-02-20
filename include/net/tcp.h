@@ -403,7 +403,9 @@ static inline void tcp_dec_quickack_mode(struct sock *sk)
 #define	TCP_ECN_SEEN		BIT(3)
 #define	TCP_ECN_MODE_ACCECN	BIT(4)
 #define	TCP_ECN_LOW		16
+#define	TCP_ECN_ECT_PERMANENT	32
 
+#define	TCP_ECN_OK			1
 #define	TCP_ECN_DISABLED	0
 #define	TCP_ECN_MODE_PENDING	(TCP_ECN_MODE_RFC3168 | TCP_ECN_MODE_ACCECN)
 #define	TCP_ECN_MODE_ANY	(TCP_ECN_MODE_RFC3168 | TCP_ECN_MODE_ACCECN)
