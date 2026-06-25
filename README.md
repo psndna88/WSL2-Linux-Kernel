@@ -28,7 +28,7 @@ Instructions for building an x86_64 WSL2 kernel with an Ubuntu distribution usin
 as follows:
 
 1. Install the build dependencies:  
-   `sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils rsync`
+   `sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils rsync libdebuginfod-dev systemtap-sdt-dev libslang2-dev libnuma-dev libbabeltrace-ctf-dev libcapstone-dev libpfm4-dev`
 
 2. Modify WSL2 kernel configs (optional):  
    `make menuconfig KCONFIG_CONFIG=Microsoft/config-wsl`
