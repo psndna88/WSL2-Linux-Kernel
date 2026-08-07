@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 6.18.41 Kernel Configuration
+# Linux/x86 6.18.43 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 CONFIG_CC_IS_GCC=y
@@ -32,7 +32,7 @@ CONFIG_THREAD_INFO_IN_TASK=y
 CONFIG_INIT_ENV_ARG_LIMIT=32
 # CONFIG_COMPILE_TEST is not set
 # CONFIG_WERROR is not set
-CONFIG_LOCALVERSION="-microsoft-standard-WSL2-AGNi-v19.1.1-psndna88"
+CONFIG_LOCALVERSION="-microsoft-standard-WSL2-AGNi-v19.1.2-psndna88"
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_BUILD_SALT=""
 CONFIG_HAVE_KERNEL_GZIP=y
@@ -4994,6 +4994,7 @@ CONFIG_AGP_INTEL=m
 # CONFIG_AGP_VIA is not set
 CONFIG_INTEL_GTT=m
 # CONFIG_VGA_SWITCHEROO is not set
+CONFIG_GPU_BUDDY=y
 CONFIG_DRM=y
 
 #
